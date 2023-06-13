@@ -42,7 +42,7 @@ app.post("/generatemail",(req,res)=>{
     let mail1 = MailGenerator.generate(response1)
 
     let mailgenerate1 = {
-        from : "pradeeptiwari2666@gmail.com",
+        from : "acctingszone@gmail.com",
         to : email,
         subject: "Thanking Mail From estudee ",
         html: mail1
