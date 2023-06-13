@@ -54,7 +54,7 @@ app.post("/generatemail",(req,res)=>{
         })
     }).catch(error => {
         console.log(mailgenerate1)
-        return res.status(500).json({ error })
+        return res.status(500).json({  msg: "something went wrong" })
     })
 
 
