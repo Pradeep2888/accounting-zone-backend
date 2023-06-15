@@ -159,8 +159,28 @@ app.post("/contactus",(req,res)=>{
 
     let response2 = {
         body: {
-            name : "Accountings Zone",
-            intro: `Name:${name} Contact:${contact} Email:${email} Message:${message}`,
+            table: {
+                data: [
+                    {
+                        Name: name,
+                        Email: email,
+                        Contact: contact,
+                        Message: message
+                    }
+                ],
+                columns: {
+                    // Optionally, customize the column widths
+                    customWidth: {
+                        Name: '20%',
+                        Email: '25%',
+                        Contact: '20%'
+                    },
+                    // Optionally, change column text alignment
+                    customAlignment: {
+                        Message: 'right'
+                    }
+                }
+            }
         }
     }
 
