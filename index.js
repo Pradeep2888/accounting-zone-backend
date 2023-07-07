@@ -1,223 +1,44 @@
-const express=require("express");
+const express=require("express")
+const { connection } = require("./config/db")
 const cors=require("cors")
-const nodemailer = require('nodemailer');
-const Mailgen = require('mailgen');
+const { contactusRoute } = require("./routes/contactus.route")
+const { userRoute } = require("./routes/user.route")
 
 const app=express()
-app.use(cors())
+
+// *****Middleware*****
+
 app.use(express.json())
+app.use(cors())
 
+
+// *****home route to check connection working status*****
 app.get("/",(req,res)=>{
-    res.send("welcome to api")
-})
-
-app.post("/enquiry",(req,res)=>{
-    const {name,email,contact,message}=req.body
-    let config = {
-
-        service : 'gmail',
-        auth : {
-            user:"acctingszone@gmail.com",
-            pass: "jbovyygqzhnxpsgx"
-        }
-    }
-
-    let transporter = nodemailer.createTransport(config);
-
-    let MailGenerator = new Mailgen({
-        theme: "default",
-        product : {
-            name: "Accountings Zone",
-            link : 'https://accountingszone.com/'
-        }
-    })
-    //  ******Thanking Mail Sending to visitor****
-    let response1 = {
-        body: {
-            name : name,
-            intro: "Thank you for taking the time to visit our website we will connect to you shortly",
-        }
-    }
-
-    let mail1 = MailGenerator.generate(response1)
-
-    let mailgenerate1 = {
-        from : "acctingszone@gmail.com",
-        to : email,
-        subject: "Thanking Mail From Acctings Zone ",
-        html: mail1
-    }
-    
-    transporter.sendMail(mailgenerate1).then(() => {
-        return res.status(201).json({
-            msg: "you should receive an email"
-        })
-    }).catch(error => {
-        console.log(mailgenerate1)
-        return res.status(500).json({  msg: "something went wrong" })
-    })
-
-
-
-    // *****Vistor information mail Sending to Company*******
-
-
-
-    let response2 = {
-        body: {
-            name : "Accountings Zone",
-            intro: `Name:${name} Contact:${contact} Email:${email} Message:${message}`,
-        }
-    }
-
-    let mail2 = MailGenerator.generate(response2)
-
-    let mailgenerate2 = {
-        from : "acctingszone@gmail.com",
-        to : "acctingszone@gmail.com",
-        subject: "New visitor detail",
-        html: mail2
-    }
-
-    
-    transporter.sendMail(mailgenerate2).then(() => {
-       console.log("mail to company sended")
-    
-    }).catch(error => {
-        console.log(mailgenerate2)
-        console.log("something went wrong")
-       
-    })
-
-
-
-
-
+    res.send({"mesg":"Welcome to accountings zone"})
 })
 
 
 
 
 
+// *****RoutesConnections****
+
+app.use("/contactus",contactusRoute)
+app.use("/user",userRoute)
 
 
 
 
 
 
-app.post("/contactus",(req,res)=>{
-    const {name,email,contact,message,subject}=req.body
-    let config = {
 
-        service : 'gmail',
-        auth : {
-            user:"acctingszone@gmail.com",
-            pass: "jbovyygqzhnxpsgx"
-        }
+
+app.listen(8080,async()=>{
+    try{
+           await connection
+           console.log("connected to port 8080")
     }
-
-    let transporter = nodemailer.createTransport(config);
-
-    let MailGenerator = new Mailgen({
-        theme: "default",
-        product : {
-            name: "Accountings Zone",
-            link : 'https://accountingszone.com/'
-        }
-    })
-    //  ******Thanking Mail Sending to visitor****
-    let response1 = {
-        body: {
-            name : name,
-            intro: "Thank you for taking the time to visit our website we will connect to you shortly",
-        }
-    }
-
-    let mail1 = MailGenerator.generate(response1)
-
-    let mailgenerate1 = {
-        from : "acctingszone@gmail.com",
-        to : email,
-        subject: "Thanking Mail From Acctings Zone ",
-        html: mail1
-    }
-    
-    transporter.sendMail(mailgenerate1).then(() => {
-        return res.status(201).json({
-            msg: "you should receive an email"
-        })
-    }).catch(error => {
-        console.log(mailgenerate1)
-        return res.status(500).json({  msg: "something went wrong" })
-    })
-
-
-
-    // *****Vistor information mail Sending to Company*******
-
-
-
-    let response2 = {
-        body: {
-            table: {
-                data: [
-                    {
-                        Name: name,
-                        Email: email,
-                        Contact: contact,
-                        Message: message
-                    }
-                ],
-                columns: {
-                    // Optionally, customize the column widths
-                    customWidth: {
-                        Name: '20%',
-                        Email: '25%',
-                        Contact: '20%'
-                    },
-                    // Optionally, change column text alignment
-                    customAlignment: {
-                        Message: 'right'
-                    }
-                }
-            }
-        }
-    }
-
-    let mail2 = MailGenerator.generate(response2)
-
-    let mailgenerate2 = {
-        from : "acctingszone@gmail.com",
-        to : "acctingszone@gmail.com",
-        subject: subject,
-        html: mail2
-    }
-
-    
-    transporter.sendMail(mailgenerate2).then(() => {
-       console.log("mail to company sended")
-    
-    }).catch(error => {
-        console.log(mailgenerate2)
-        console.log("something went wrong")
-       
-    })
-
-
-
-
-
-})
-
-
-
-
-
-
-
-
-
-
-app.listen(8080,()=>{
-    console.log("server Started in port 8080")
+    catch{(e)=>{
+        console.log(e)
+    }}
 })
